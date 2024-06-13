@@ -8,8 +8,8 @@ from api.edit_checklist import edit_checklist_bp
 
 app = Flask(__name__)
 
-# Configuración de CORS con métodos permitidos
-cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:8100", "methods": ["GET", "POST", "PATCH", "DELETE"]}})
+# Configuración de CORS para permitir todas las solicitudes desde localhost:8100
+cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:8100"}})
 
 app.register_blueprint(usuario_bp, url_prefix='/api')
 app.register_blueprint(checklist_bp, url_prefix='/api')
