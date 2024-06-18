@@ -1,73 +1,98 @@
 import requests
-import json
-import datetime
+import logging
 from flask import Blueprint, jsonify, request
 from flask_cors import cross_origin
 from config import SUPABASE_URL, HEADERS
 
+logging.basicConfig(level=logging.DEBUG)
+
 edit_checklist_bp = Blueprint('edit_checklist_bp', __name__)
 
 @edit_checklist_bp.route('/edit_checklist/<int:id>', methods=['PATCH'])
-@cross_origin(origin='http://localhost:8100')
+@cross_origin(origins='http://localhost:8100')
 def edit_checklist(id):
     try:
         data = request.json
-        print("Received data:", data)
+        logging.debug(f"Received data: {data}")
 
         nombre = data.get('nombre')
         id_tipo_maquina = data.get('id_tipo_maquina')
         componentes = data.get('componentes')
 
-        # Actualizar el checklist con el ID proporcionado
-        checklist_data = {}
-        if nombre:
-            checklist_data['nombre'] = nombre
-        if id_tipo_maquina:
-            checklist_data['id_tipo_maquina'] = id_tipo_maquina
+        if not (nombre or id_tipo_maquina or componentes):
+            return jsonify({'error': 'No se proporcionaron datos para actualizar'}), 400
 
-        if checklist_data:
-            response = requests.patch(f"{SUPABASE_URL}/checklists/{id}", headers=HEADERS, data=json.dumps(checklist_data))
-            if response.status_code != 200:
-                return jsonify({'error': 'No se pudo actualizar el checklist'}), 500
+        # Actualizar checklist si hay datos relevantes
+        if nombre or id_tipo_maquina:
+            checklist_data = {
+                'id_checklist': id,
+                'nombre': nombre,
+                'id_tipo_maquina': id_tipo_maquina
+            }
+            update_checklist(checklist_data)
 
-        # Actualizar los componentes y tareas asociadas
+        # Actualizar componentes y tareas asociadas
         if componentes:
             for componente in componentes:
-                componente_id = componente.get('id_componente')
-                componente_nombre = componente.get('nombre')
-                if componente_id:
-                    # Actualizar el nombre del componente
-                    componente_data = {'nombre': componente_nombre}
-                    response = requests.patch(f"{SUPABASE_URL}/componentes/{componente_id}", headers=HEADERS, data=json.dumps(componente_data))
-                    if response.status_code != 200:
-                        return jsonify({'error': f'No se pudo actualizar el componente con ID {componente_id}'}), 500
-                else:
-                    # Si no hay ID, se agrega un nuevo componente
-                    response = requests.post(f"{SUPABASE_URL}/componentes", headers=HEADERS, data=json.dumps({'nombre': componente_nombre}))
-                    if response.status_code != 201:
-                        return jsonify({'error': 'No se pudo crear un nuevo componente'}), 500
-                    componente_id = response.json().get('id_componente')
-
-                # Actualizar las tareas asociadas al componente
-                tareas = componente.get('tareas', [])
-                if tareas:
-                    for tarea in tareas:
-                        tarea_id = tarea.get('id_tarea')
-                        tarea_nombre = tarea.get('nombre')
-                        if tarea_id:
-                            # Actualizar el nombre de la tarea
-                            tarea_data = {'nombre': tarea_nombre}
-                            response = requests.patch(f"{SUPABASE_URL}/tareas/{tarea_id}", headers=HEADERS, data=json.dumps(tarea_data))
-                            if response.status_code != 200:
-                                return jsonify({'error': f'No se pudo actualizar la tarea con ID {tarea_id}'}), 500
-                        else:
-                            # Si no hay ID, se agrega una nueva tarea
-                            response = requests.post(f"{SUPABASE_URL}/tareas", headers=HEADERS, data=json.dumps({'nombre': tarea_nombre, 'id_componente': componente_id}))
-                            if response.status_code != 201:
-                                return jsonify({'error': 'No se pudo crear una nueva tarea'}), 500
+                update_componente(componente)
 
         return jsonify({'message': 'Checklist actualizado exitosamente'}), 200
 
     except Exception as e:
-        print("Exception:", str(e))
+        logging.exception("Exception occurred")
         return jsonify({'error': 'Error en el servidor'}), 500
+
+
+def update_tarea(tarea_data):
+    tarea_id = tarea_data['id_tarea']
+    url = f"{SUPABASE_URL}tareas?id_tarea=eq.{tarea_id}"
+    headers = HEADERS
+    try:
+        response = requests.patch(url, json=tarea_data, headers=headers)
+        response.raise_for_status()
+        if response.status_code == 204:
+            logging.debug(f"Tarea actualizada exitosamente: No se devolvieron contenidos.")
+        else:
+            logging.debug(f"Tarea actualizada exitosamente.")
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Error actualizando tarea: {e}")
+        raise
+
+
+def update_checklist(checklist_data):
+    checklist_id = checklist_data['id_checklist']
+    url = f"{SUPABASE_URL}checklists?id_checklist=eq.{checklist_id}"
+    headers = HEADERS
+    try:
+        response = requests.patch(url, json=checklist_data, headers=headers)
+        response.raise_for_status()
+        if response.status_code == 204:
+            logging.debug(f"Checklist actualizado exitosamente: No se devolvieron contenidos.")
+        else:
+            logging.debug(f"Checklist actualizado exitosamente.")
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Error actualizando checklist: {e}")
+        raise
+
+
+def update_componente(componente_data):
+    componente_id = componente_data['id_componente']
+    url = f"{SUPABASE_URL}componentes?id_componente=eq.{componente_id}"
+    headers = HEADERS
+    try:
+        response = requests.patch(url, json={'nombre': componente_data['nombre']}, headers=headers)
+        response.raise_for_status()
+        if response.status_code == 204:
+            logging.debug(f"Componente actualizado exitosamente: No se devolvieron contenidos.")
+        else:
+            logging.debug(f"Componente actualizado exitosamente.")
+        
+        # Actualizar tareas asociadas al componente
+        tasks = componente_data.get('tasks', [])
+        for task in tasks:
+            update_tarea(task)
+
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Error actualizando componente: {e}")
+        raise
+

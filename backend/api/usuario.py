@@ -6,7 +6,7 @@ from config import SUPABASE_URL, HEADERS
 usuario_bp = Blueprint('usuario_bp', __name__)
 
 @usuario_bp.route('/usuario', methods=['POST'])
-@cross_origin(origin='http://localhost:8100', headers=['Content-Type', 'Authorization'])
+@cross_origin(origins='http://localhost:8100', headers=['Content-Type', 'Authorization'])
 def usuario():
     data = request.json
     email = data.get('email')

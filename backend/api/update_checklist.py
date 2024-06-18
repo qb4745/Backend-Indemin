@@ -6,7 +6,7 @@ import requests
 update_checklist_bp = Blueprint('update_checklist_bp', __name__)
 
 @update_checklist_bp.route('/checklists', methods=['GET'])
-@cross_origin(origin='http://localhost:8100')
+@cross_origin(origins='http://localhost:8100')
 def get_checklists():
     try:
         codigo_interno = request.args.get('codigo_interno')

@@ -8,7 +8,7 @@ from config import SUPABASE_URL, HEADERS
 checklist_bp = Blueprint('checklist_bp', __name__)
 
 @checklist_bp.route('/create_checklist', methods=['POST'])
-@cross_origin(origin='http://localhost:8100')
+@cross_origin(origins='http://localhost:8100')
 def create_checklist():
     try:
         data = request.json

@@ -1,0 +1,43 @@
+2024-06-15 19:46:32,127 WARNING  * Debugger is active!
+2024-06-15 19:46:32,135 INFO  * Debugger PIN: 971-802-379
+2024-06-15 19:46:43,864 WARNING Unknown option passed to Flask-CORS: origin
+2024-06-15 19:46:43,864 INFO 127.0.0.1 - - [15/Jun/2024 19:46:43] "OPTIONS /api/crear_maquinas HTTP/1.1" 200 -
+2024-06-15 19:46:44,130 WARNING Unknown option passed to Flask-CORS: origin
+2024-06-15 19:46:44,137 INFO 127.0.0.1 - - [15/Jun/2024 19:46:44] "[35m[1mPOST /api/crear_maquinas HTTP/1.1[0m" 500 -
+2024-06-15 19:47:24,698 INFO  * Detected change in 'C:\\Users\\Aleja\\OneDrive\\Desktop\\Nueva carpeta\\Backend-Indemin\\backend\\app.py', reloading
+2024-06-15 19:47:25,553 WARNING  * Debugger is active!
+2024-06-15 19:47:25,563 INFO  * Debugger PIN: 971-802-379
+2024-06-15 19:47:35,564 WARNING Unknown option passed to Flask-CORS: origin
+2024-06-15 19:47:35,564 INFO 127.0.0.1 - - [15/Jun/2024 19:47:35] "OPTIONS /api/crear_maquinas HTTP/1.1" 200 -
+2024-06-15 19:47:35,812 WARNING Unknown option passed to Flask-CORS: origin
+2024-06-15 19:47:35,813 INFO 127.0.0.1 - - [15/Jun/2024 19:47:35] "[35m[1mPOST /api/crear_maquinas HTTP/1.1[0m" 500 -
+2024-06-15 19:48:57,002 INFO  * Detected change in 'C:\\Users\\Aleja\\OneDrive\\Desktop\\Nueva carpeta\\Backend-Indemin\\backend\\app.py', reloading
+2024-06-15 19:48:57,934 WARNING  * Debugger is active!
+2024-06-15 19:48:57,945 INFO  * Debugger PIN: 971-802-379
+2024-06-15 19:49:05,422 WARNING Unknown option passed to Flask-CORS: origin
+2024-06-15 19:49:05,422 INFO 127.0.0.1 - - [15/Jun/2024 19:49:05] "OPTIONS /api/crear_maquinas HTTP/1.1" 200 -
+2024-06-15 19:49:05,685 WARNING Unknown option passed to Flask-CORS: origin
+2024-06-15 19:49:05,686 INFO 127.0.0.1 - - [15/Jun/2024 19:49:05] "[35m[1mPOST /api/crear_maquinas HTTP/1.1[0m" 500 -
+2024-06-15 19:49:28,699 INFO  * Detected change in 'C:\\Users\\Aleja\\OneDrive\\Desktop\\Nueva carpeta\\Backend-Indemin\\backend\\api\\crear_maquinas.py', reloading
+2024-06-15 19:49:29,764 WARNING  * Debugger is active!
+2024-06-15 19:49:29,773 INFO  * Debugger PIN: 971-802-379
+2024-06-15 19:49:35,390 WARNING Unknown option passed to Flask-CORS: origin
+2024-06-15 19:49:35,391 INFO 127.0.0.1 - - [15/Jun/2024 19:49:35] "OPTIONS /api/crear_maquinas HTTP/1.1" 200 -
+2024-06-15 19:49:35,652 WARNING Unknown option passed to Flask-CORS: origin
+2024-06-15 19:49:35,658 DEBUG Starting new HTTPS connection (1): lcserliwuqwzfjtrdcib.supabase.co:443
+2024-06-15 19:49:36,594 DEBUG https://lcserliwuqwzfjtrdcib.supabase.co:443 "POST /rest/v1/maquinas HTTP/1.1" 409 None
+2024-06-15 19:49:36,595 INFO 127.0.0.1 - - [15/Jun/2024 19:49:36] "[31m[1mPOST /api/crear_maquinas HTTP/1.1[0m" 409 -
+2024-06-15 19:56:57,881 INFO  * Detected change in 'C:\\Users\\Aleja\\OneDrive\\Desktop\\Nueva carpeta\\Backend-Indemin\\backend\\api\\crear_maquinas.py', reloading
+2024-06-15 19:56:58,834 WARNING  * Debugger is active!
+2024-06-15 19:56:58,846 INFO  * Debugger PIN: 971-802-379
+2024-06-15 19:57:10,887 INFO 127.0.0.1 - - [15/Jun/2024 19:57:10] "[33mOPTIONS /api/crear_maquinas HTTP/1.1[0m" 404 -
+2024-06-15 19:59:53,503 INFO  * Detected change in 'C:\\Users\\Aleja\\OneDrive\\Desktop\\Nueva carpeta\\Backend-Indemin\\backend\\api\\crear_maquinas.py', reloading
+2024-06-15 19:59:54,512 WARNING  * Debugger is active!
+2024-06-15 19:59:54,520 INFO  * Debugger PIN: 971-802-379
+2024-06-15 20:00:29,994 INFO 127.0.0.1 - - [15/Jun/2024 20:00:29] "[33mOPTIONS /api/crear_maquinas HTTP/1.1[0m" 404 -
+2024-06-15 20:00:40,008 INFO 127.0.0.1 - - [15/Jun/2024 20:00:40] "[33mOPTIONS /api/crear_maquinas HTTP/1.1[0m" 404 -
+2024-06-15 20:01:57,625 INFO  * Detected change in 'C:\\Users\\Aleja\\OneDrive\\Desktop\\Nueva carpeta\\Backend-Indemin\\backend\\app.py', reloading
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 971-802-379
+INFO:werkzeug:127.0.0.1 - - [15/Jun/2024 20:02:08] "[33mOPTIONS /api/crear_maquinas HTTP/1.1[0m" 404 -
+INFO:werkzeug: * Detected change in 'C:\\Users\\Aleja\\OneDrive\\Desktop\\Nueva carpeta\\Backend-Indemin\\backend\\api\\faenas.py', reloading
