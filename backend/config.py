@@ -4,3 +4,4 @@ HEADERS = {
     'apikey': SUPABASE_API_KEY,
     'Content-Type': 'application/json'
 }
+JWT_SECRET_KEY = '06500650a'
