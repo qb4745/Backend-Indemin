@@ -9,7 +9,7 @@ usuario_bp = Blueprint('usuario_bp', __name__)
 
 @usuario_bp.route('/usuario', methods=['POST','GET'])
 
-@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5000'], headers=['Content-Type', 'Authorization'])
+@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500'], headers=['Content-Type', 'Authorization'])
 def usuario():
     try:
         data = request.json
@@ -78,7 +78,7 @@ def token_required(f):
     return decorated
 
 @usuario_bp.route('/protected', methods=['GET'])
-@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5000'], headers=['Content-Type', 'Authorization'])
+@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500'], headers=['Content-Type', 'Authorization'])
 @token_required
 def protected_route(current_user):
     return jsonify({'message': 'Ruta protegida', 'user': current_user})

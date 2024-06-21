@@ -139,3 +139,25 @@ def create_checklist():
     except Exception as e:
         print("Exception:", str(e))
         return jsonify({'error': 'Error en el servidor'}), 500
+    
+@checklist_bp.route('/get_checklists', methods=['GET'])
+@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500'], headers=['Content-Type', 'Authorization'])
+def get_checklists():
+    try:
+        codigo_interno = request.args.get('codigo_interno')
+        if not codigo_interno:
+            return jsonify({'error': 'Código interno es requerido'}), 400
+
+        # Obtener el checklist por código interno
+        url = f"{SUPABASE_URL}checklists?codigo_interno=eq.{codigo_interno}&select=*,componentes(*,tasks(*,estado_tarea(*)))"
+        response = requests.get(url, headers=HEADERS)
+        
+        if response.status_code != 200:
+            return jsonify({'error': 'Error obteniendo checklists'}), 500
+        
+        checklists = response.json()
+        return jsonify(checklists), 200
+
+    except Exception as e:
+        print("Exception:", str(e))
+        return jsonify({'error': 'Error en el servidor'}), 500
