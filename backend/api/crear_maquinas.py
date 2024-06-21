@@ -54,7 +54,6 @@ def crear_maquinas():
         response = requests.post(url, headers=HEADERS, data=json.dumps(maquina_data))
         maquinas_logger.debug(f"Respuesta de Supabase al crear máquina: {response.status_code} - {response.text}")
         
-        # Verifica si la solicitud fue exitosa (código 201 para creación exitosa)
         if response.status_code == 201:
             nueva_maquina = response.json()
             return jsonify(nueva_maquina), 201
