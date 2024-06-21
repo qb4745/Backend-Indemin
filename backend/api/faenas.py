@@ -24,22 +24,34 @@ def crear_faena():
         }
         
         # Realiza la solicitud POST a Supabase para crear la faena
-        response = requests.post(SUPABASE_URL + 'faenas', headers=HEADERS, data=json.dumps(nueva_faena))
+        response = requests.post(f'{SUPABASE_URL}/faenas', headers=HEADERS, data=json.dumps(nueva_faena))
+        
+        # Verifica el estado de la respuesta y los datos de la respuesta
+        faenas_logger.debug(f"Solicitud a Supabase: {response.request.method} {response.request.url} - Headers: {response.request.headers} - Data: {response.request.body}")
+        faenas_logger.debug(f"Respuesta de Supabase: {response.status_code} - {response.text}")
+        
         if response.status_code == 201:
-            faena_creada = response.json()
-            faenas_logger.info(f"Faena creada con ID: {faena_creada['id']}")
-            return faena_creada['id']
+            if response.text.strip():  # Verifica si la respuesta no está vacía
+                faena_creada = response.json()
+                faenas_logger.info(f"Faena creada con ID: {faena_creada['id']}")
+                return faena_creada['id']
+            else:
+                faenas_logger.error("La respuesta de Supabase está vacía pero el estado es 201.")
+                return None
         else:
             error_message = f"Error al crear faena. Código de respuesta: {response.status_code}. Detalles: {response.text}"
             faenas_logger.error(error_message)
             return None
     
+    except json.JSONDecodeError as e:
+        faenas_logger.error(f"Error al decodificar JSON: {str(e)} - Respuesta: {response.text}")
+        return None
     except Exception as e:
         faenas_logger.error(f"Excepción creando faena: {str(e)}")
         return None
 
 @faenas_bp.route('/crear-faena', methods=['POST'])
-@cross_origin(origin='http://localhost:8100')
+@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500'])
 def crear_faena_endpoint():
     try:
         id_faena = crear_faena()
