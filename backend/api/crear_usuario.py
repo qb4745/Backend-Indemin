@@ -43,6 +43,7 @@ def crear_usuario():
 @crear_usuario_bp.route('/usuarios', methods=['GET'])
 @cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500', 'https://alvarofenero.github.io'], headers=['Content-Type', 'Authorization'])
 @token_required
+
 def obtener_usuarios(current_user):
     try:
         response = requests.get(SUPABASE_URL + 'usuario', headers=HEADERS)

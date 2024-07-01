@@ -1,0 +1,5 @@
+# Ignorar el directorio del entorno virtual
+backend/myenv/
+
+# Ignorar el directorio __pycache__
+backend/__pycache__/
