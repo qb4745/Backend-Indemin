@@ -6,7 +6,7 @@ from config import SUPABASE_URL, HEADERS
 maquinas_bp = Blueprint('maquinas_bp', __name__)
 
 @maquinas_bp.route('/maquinas', methods=['GET'])
-@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500'])
+@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500', 'https://alvarofenero.github.io'])
 def get_maquinas():
     try:
         codigo_interno = request.args.get('codigo_interno', '')

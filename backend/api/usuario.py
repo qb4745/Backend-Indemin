@@ -7,9 +7,8 @@ from config import SUPABASE_URL, HEADERS, JWT_SECRET_KEY
 
 usuario_bp = Blueprint('usuario_bp', __name__)
 
-@usuario_bp.route('/usuario', methods=['POST','GET'])
-
-@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500'], headers=['Content-Type', 'Authorization'])
+@usuario_bp.route('/usuario', methods=['POST'])
+@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500', 'https://alvarofenero.github.io'])
 def usuario():
     try:
         data = request.json
@@ -30,6 +29,9 @@ def usuario():
                     'email': user['email'],
                     'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
                 }, JWT_SECRET_KEY, algorithm='HS256')
+
+                # jwt.encode devuelve un objeto bytes en Python 3, convertirlo a string
+                token = token.decode('utf-8') if isinstance(token, bytes) else token
 
                 return jsonify({
                     'message': 'Usuario logueado correctamente',
@@ -78,7 +80,7 @@ def token_required(f):
     return decorated
 
 @usuario_bp.route('/protected', methods=['GET'])
-@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500'], headers=['Content-Type', 'Authorization'])
+@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500', 'https://alvarofenero.github.io'])
 @token_required
 def protected_route(current_user):
     return jsonify({'message': 'Ruta protegida', 'user': current_user})

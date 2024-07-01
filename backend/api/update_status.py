@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.DEBUG)
 update_status_bp = Blueprint('update_status_bp', __name__)
 
 @update_status_bp.route('/update_task_status/<int:task_id>', methods=['PATCH'])
-@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500'])
+@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500', 'https://alvarofenero.github.io'])
 def update_status(task_id):
     try:
         data = request.get_json()

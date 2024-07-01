@@ -18,7 +18,7 @@ maquinas_logger.addHandler(handler)
 maquinas_logger.setLevel(logging.DEBUG)
 
 @crear_maquinas_bp.route('/crear-maquinas', methods=['POST', 'OPTIONS'])
-@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500'])
+@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500', 'https://alvarofenero.github.io'])
 def crear_maquinas():
     if request.method == 'OPTIONS':
         return jsonify({}), 200

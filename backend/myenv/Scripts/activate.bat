@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\Aleja\OneDrive\Desktop\Nueva carpeta\Backend-Indemin\backend\myenv
+set VIRTUAL_ENV=C:\Users\Admin\Documents\GitHub\Backend-Indemin\backend\myenv
 
 if not defined PROMPT set PROMPT=$P$G
 

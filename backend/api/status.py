@@ -6,7 +6,7 @@ from config import SUPABASE_URL, HEADERS
 status_bp = Blueprint('status_bp', __name__)
 
 @status_bp.route('/status', methods=['GET'])
-@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500'])
+@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500', 'https://alvarofenero.github.io'])
 def get_status():
     try:
         url = f"{SUPABASE_URL}tarea_estado"

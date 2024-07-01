@@ -1,8 +1,9 @@
 import requests
 import logging
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, g
 from flask_cors import CORS, cross_origin
 from config import SUPABASE_URL, HEADERS
+from auth import token_required  # Importar el middleware token_required
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -10,10 +11,11 @@ edit_checklist_bp = Blueprint('edit_checklist_bp', __name__)
 CORS(edit_checklist_bp, origins=['http://localhost:8100', 'http://127.0.0.1:5500'], supports_credentials=True)
 
 @edit_checklist_bp.route('/edit_checklist/<int:id>', methods=['PATCH', 'OPTIONS'])
-@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500'], headers=['Content-Type', 'Authorization'])
+@cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500', 'https://alvarofenero.github.io'], headers=['Content-Type', 'Authorization'])
+@token_required  # Añadir el decorador token_required
 def edit_checklist(id):
     if request.method == 'OPTIONS':
-        return jsonify({}), 204  # Responder sin contenido para solicitudes OPTIONS
+        return jsonify({}), 204  # Responder sin contenido para solicitudes OPTIONS, 'https://alvarofenero.github.io'
 
     try:
         data = request.json
@@ -144,7 +146,7 @@ def update_componente(componente_data):
                     update_tarea(task)
                     del existing_tasks_dict[task['id_tarea']]
                 else:
-                    task['id_componente'] = componente_id
+                    task['id_tarea'] = componente_id
                     create_tarea(task)
 
         for task_id in existing_tasks_dict:
