@@ -14,6 +14,7 @@ from api.update_status import update_status_bp
 from api.eliminar_checklist import eliminar_checklist_bp
 from api.crear_usuario import crear_usuario_bp
 from api.estado_checklist import estado_checklist_bp
+from api.comentario_tarea import comentario_tarea_bp
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = JWT_SECRET_KEY  # Configurar el secreto JWT directamente desde config.py
@@ -37,6 +38,7 @@ app.register_blueprint(update_status_bp, url_prefix='/api')
 app.register_blueprint(eliminar_checklist_bp, url_prefix='/api')
 app.register_blueprint(crear_usuario_bp, url_prefix='/api')
 app.register_blueprint(estado_checklist_bp, url_prefix='/api')
+app.register_blueprint(comentario_tarea_bp, url_prefix='/api')
 
 if __name__ == '__main__':
     app.run(debug=True)
