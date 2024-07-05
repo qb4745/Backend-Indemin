@@ -3,19 +3,19 @@ import logging
 from flask import Blueprint, jsonify, request, g
 from flask_cors import CORS, cross_origin
 from config import SUPABASE_URL, HEADERS
-from auth import token_required  # Importar el middleware token_required
+from auth import token_required
 
 logging.basicConfig(level=logging.DEBUG)
 
 edit_checklist_bp = Blueprint('edit_checklist_bp', __name__)
-CORS(edit_checklist_bp, origins=['http://localhost:8100', 'http://127.0.0.1:5500'], supports_credentials=True)
+CORS(edit_checklist_bp, origins=['http://localhost:8100', 'http://127.0.0.1:5500', 'https://alvarofenero.github.io'], supports_credentials=True)
 
 @edit_checklist_bp.route('/edit_checklist/<int:id>', methods=['PATCH', 'OPTIONS'])
 @cross_origin(origins=['http://localhost:8100', 'http://127.0.0.1:5500', 'https://alvarofenero.github.io'], headers=['Content-Type', 'Authorization'])
-@token_required  # Añadir el decorador token_required
+@token_required
 def edit_checklist(id):
     if request.method == 'OPTIONS':
-        return jsonify({}), 204  # Responder sin contenido para solicitudes OPTIONS, 'https://alvarofenero.github.io'
+        return jsonify({}), 204
 
     try:
         data = request.json
@@ -24,6 +24,8 @@ def edit_checklist(id):
         nombre = data.get('nombre')
         id_tipo_maquina = data.get('id_tipo_maquina')
         componentes = data.get('componentes')
+        components_to_delete = data.get('components_to_delete')
+        tasks_to_delete = data.get('tasks_to_delete')  # Obtener las tareas a eliminar del request
 
         if not (nombre or id_tipo_maquina or componentes):
             return jsonify({'error': 'No se proporcionaron datos para actualizar'}), 400
@@ -49,16 +51,25 @@ def edit_checklist(id):
         # Actualizar componentes y tareas asociadas
         if componentes:
             for componente in componentes:
-                if componente['id_componente'] == 0:
+                if 'id_componente' not in componente or componente['id_componente'] == 0:
                     create_componente(id, componente)
                 else:
                     update_componente(componente)
                     if componente['id_componente'] in existing_componentes_dict:
                         del existing_componentes_dict[componente['id_componente']]
 
-        # Eliminar componentes que ya no están en la lista
-        for componente_id in existing_componentes_dict:
+        logging.debug(f"Components to delete: {components_to_delete}")
+
+        # Eliminar componentes que ya no están en la lista enviada
+        for componente_id in components_to_delete:
+            logging.debug(f"Deleting component with id: {componente_id}")
             delete_componente(componente_id)
+
+        # Eliminar tareas que ya no están en la lista enviada
+        logging.debug(f"Tasks to delete: {tasks_to_delete}")
+        for task_id in tasks_to_delete:
+            logging.debug(f"Deleting task with id: {task_id}")
+            delete_tarea(task_id)
 
         return jsonify({'message': 'Checklist actualizado exitosamente'}), 200
 
@@ -93,22 +104,30 @@ def create_tarea(tarea_data):
         response.raise_for_status()
         logging.debug(f"Respuesta de crear tarea: {response.status_code}, {response.text}")
         if response.status_code == 201 and response.text.strip():
-            logging.debug(f"Tarea creada exitosamente: {response.json()}")
+            tarea = response.json()
+            tarea_id = tarea['id_tarea']
+            logging.debug(f"Tarea creada exitosamente: {tarea}")
         else:
             logging.debug(f"Tarea creada exitosamente con respuesta vacía.")
+            tarea_id = obtener_id_tarea(tarea_data['nombre'], tarea_data['id_componente'])
+
     except requests.exceptions.RequestException as e:
         logging.error(f"Error creando tarea: {e}")
         raise
 
-def delete_tarea(task_id):
-    url = f"{SUPABASE_URL}tareas?id_tarea=eq.{task_id}"
+def obtener_id_tarea(nombre, id_componente):
+    url = f"{SUPABASE_URL}tareas?nombre=eq.{nombre}&id_componente=eq.{id_componente}"
     headers = HEADERS
     try:
-        response = requests.delete(url, headers=headers)
+        response = requests.get(url, headers=headers)
         response.raise_for_status()
-        logging.debug(f"Tarea eliminada exitosamente: {task_id}")
+        tareas = response.json()
+        if tareas:
+            return tareas[0]['id_tarea']
+        else:
+            raise ValueError("No se pudo obtener el ID de la tarea creada")
     except requests.exceptions.RequestException as e:
-        logging.error(f"Error eliminando tarea: {e}")
+        logging.error(f"Error obteniendo el ID de la tarea: {e}")
         raise
 
 def update_checklist(checklist_id, checklist_data):
@@ -123,6 +142,7 @@ def update_checklist(checklist_id, checklist_data):
         raise
 
 def update_componente(componente_data):
+    logging.debug(f"Datos del componente recibidos: {componente_data}")
     componente_id = componente_data['id_componente']
     url = f"{SUPABASE_URL}componentes?id_componente=eq.{componente_id}"
     headers = HEADERS
@@ -138,7 +158,7 @@ def update_componente(componente_data):
         existing_tasks_dict = {task['id_tarea']: task for task in existing_tasks}
 
         for task in componente_data.get('tasks', []):
-            if task['id_tarea'] == 0:
+            if int(task.get('id_tarea', 0)) == 0:
                 task['id_componente'] = componente_id
                 create_tarea(task)
             else:
@@ -146,11 +166,7 @@ def update_componente(componente_data):
                     update_tarea(task)
                     del existing_tasks_dict[task['id_tarea']]
                 else:
-                    task['id_tarea'] = componente_id
                     create_tarea(task)
-
-        for task_id in existing_tasks_dict:
-            delete_tarea(task_id)
 
     except requests.exceptions.RequestException as e:
         logging.error(f"Error actualizando componente: {e}")
@@ -171,8 +187,9 @@ def create_componente(checklist_id, componente_data):
         response.raise_for_status()
         logging.debug(f"Respuesta de crear componente: {response.status_code}, {response.text}")
         if response.status_code == 201 and response.text.strip():
-            logging.debug(f"Componente creado exitosamente: {response.json()}")
-            componente_id = response.json()['id_componente']
+            componente = response.json()
+            componente_id = componente['id_componente']
+            logging.debug(f"Componente creado exitosamente: {componente}")
         else:
             logging.debug(f"Componente creado exitosamente con respuesta vacía.")
             componente_id = obtener_id_componente(componente_data['nombre'], checklist_id)
@@ -208,6 +225,7 @@ def delete_componente(componente_id):
         response_tareas = requests.get(url_tareas, headers=headers)
         response_tareas.raise_for_status()
         tareas = response_tareas.json()
+        logging.debug(f"Tareas a eliminar para el componente {componente_id}: {tareas}")
 
         # Eliminar todas las tareas asociadas
         for tarea in tareas:
@@ -220,4 +238,15 @@ def delete_componente(componente_id):
         logging.debug(f"Componente eliminado exitosamente: {componente_id}")
     except requests.exceptions.RequestException as e:
         logging.error(f"Error eliminando componente: {e}")
+        raise
+
+def delete_tarea(task_id):
+    url = f"{SUPABASE_URL}tareas?id_tarea=eq.{task_id}"
+    headers = HEADERS
+    try:
+        response = requests.delete(url, headers=headers)
+        response.raise_for_status()
+        logging.debug(f"Tarea eliminada exitosamente: {task_id}")
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Error eliminando tarea: {e}")
         raise
