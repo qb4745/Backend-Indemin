@@ -17,28 +17,48 @@ from api.estado_checklist import estado_checklist_bp
 from api.comentario_tarea import comentario_tarea_bp
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = JWT_SECRET_KEY  # Configurar el secreto JWT directamente desde config.py
+app.config["SECRET_KEY"] = (
+    JWT_SECRET_KEY  # Configurar el secreto JWT directamente desde config.py
+)
 
 # Configuración de CORS para permitir solicitudes desde localhost:8100 y 127.0.0.1:5000
-CORS(app, resources={r"/api/*": {"origins": ["http://localhost:8100", "http://127.0.0.1:5500", "https://alvarofenero.github.io"]}})
+CORS(
+    app,
+    resources={
+        r"/api/*": {
+            "origins": [
+                "http://localhost:8100",
+                "http://127.0.0.1:5500",
+                "https://alvarofenero.github.io",
+                "https://backend-indemin.onrender.com",
+            ]
+        }
+    },
+)
 
 # Configurar el registro básico
-logging.basicConfig(filename='app.log', level=logging.DEBUG)
+logging.basicConfig(filename="app.log", level=logging.DEBUG)
+
+
+@app.route("/")
+def home():
+    return "Indemin!"
+
 
 # Registrar los blueprints existentes
-app.register_blueprint(usuario_bp, url_prefix='/api')
-app.register_blueprint(checklist_bp, url_prefix='/api')
-app.register_blueprint(maquinas_bp, url_prefix='/api')
-app.register_blueprint(crear_maquinas_bp, url_prefix='/api')
-app.register_blueprint(update_checklist_bp, url_prefix='/api')
-app.register_blueprint(edit_checklist_bp, url_prefix='/api')
-app.register_blueprint(faenas_bp, url_prefix='/api')
-app.register_blueprint(status_bp, url_prefix='/api')
-app.register_blueprint(update_status_bp, url_prefix='/api')
-app.register_blueprint(eliminar_checklist_bp, url_prefix='/api')
-app.register_blueprint(crear_usuario_bp, url_prefix='/api')
-app.register_blueprint(estado_checklist_bp, url_prefix='/api')
-app.register_blueprint(comentario_tarea_bp, url_prefix='/api')
+app.register_blueprint(usuario_bp, url_prefix="/api")
+app.register_blueprint(checklist_bp, url_prefix="/api")
+app.register_blueprint(maquinas_bp, url_prefix="/api")
+app.register_blueprint(crear_maquinas_bp, url_prefix="/api")
+app.register_blueprint(update_checklist_bp, url_prefix="/api")
+app.register_blueprint(edit_checklist_bp, url_prefix="/api")
+app.register_blueprint(faenas_bp, url_prefix="/api")
+app.register_blueprint(status_bp, url_prefix="/api")
+app.register_blueprint(update_status_bp, url_prefix="/api")
+app.register_blueprint(eliminar_checklist_bp, url_prefix="/api")
+app.register_blueprint(crear_usuario_bp, url_prefix="/api")
+app.register_blueprint(estado_checklist_bp, url_prefix="/api")
+app.register_blueprint(comentario_tarea_bp, url_prefix="/api")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
