@@ -1,4 +1,5 @@
 Flask
 Flask-CORS
 requests
-jwt
+PyJWT
+Gunicorn
