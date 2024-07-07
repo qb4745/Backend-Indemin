@@ -22,19 +22,35 @@ app.config["SECRET_KEY"] = (
 )
 
 # Configuración de CORS para permitir solicitudes desde localhost:8100 y 127.0.0.1:5000
+# CORS(
+#     app,
+#     resources={
+#         r"/api/*": {
+#             "origins": [
+#                 "http://localhost:8100",
+#                 "http://127.0.0.1:5500",
+#                 "https://alvarofenero.github.io",
+#                 "https://backend-indemin.onrender.com",
+#             ]
+#         }
+#     },
+# )
+
 CORS(
     app,
     resources={
         r"/api/*": {
             "origins": [
-                "http://localhost:8100",
+                "https://localhost",
                 "http://127.0.0.1:5500",
                 "https://alvarofenero.github.io",
+                "http://localhost:8100",
                 "https://backend-indemin.onrender.com",
             ]
         }
     },
 )
+
 
 # Configurar el registro básico
 logging.basicConfig(filename="app.log", level=logging.DEBUG)
